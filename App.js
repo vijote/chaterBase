@@ -1,34 +1,48 @@
 import { View, Text } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { firebase } from '@react-native-firebase/database';
+import { generateCredentials } from './src/helpers/utils';
+import { BASE_URL }  from '@env';
+
+const credentials = generateCredentials()
+
+/* Message example:
+  {
+    text: string,
+    date: new Date().toJSON(),
+    sender: uuid
+  }
+*/
 
 export default function App() {
-  const [state, setState] = useState('Cargando...');
-  const firebaseApp = useRef(null);
+  const [appLoaded, setAppLoaded] = useState(false);
 
   useEffect(() => {
+    let firebaseApp;
+    const refURL = `${BASE_URL}/test`
+
     if (!firebase?.apps?.length) {
       firebase.initializeApp(credentials).then(chatApp => {
-        setState('App inicializada!');
+        setAppLoaded(true);
       })
     } else {
-      setState('App previamente cargada')
+      setAppLoaded(true)
     }
     
-    firebaseApp.current = firebase
+    firebaseApp = firebase
       .database()
-      .ref('')
+      .ref(refURL)
       .limitToFirst(25)
       .once('value', snapshot => {
         console.log('Data: ', snapshot.val());
       });
     
-    return () => firebaseApp.current?.database().ref('').off('value', firebaseApp.current);
+    return () => firebaseApp?.database()?.ref(refURL)?.off('value', firebaseApp);
   }, [])
 
     return (
       <View>
-        <Text>{state}</Text>
+        <Text>{appLoaded ? 'Cargado 👍' : 'Cargando ⌛'}</Text>
       </View>
     );
 
