@@ -14,14 +14,15 @@ import Home from './screens/Home';
 // Miscellaneous
 import { generateCredentials } from './helpers/utils';
 import { BASE_URL }  from '@env';
+import Chat from './screens/Chat';
 
 /*
   TODO:
-    - Add basic screens
     - Add minimal chat interaction
     - Add styles
     - Refactor firebase initialization
     - Add loading / splash screen?
+    - Add firebase login?
 */
 
 const credentials = generateCredentials()
@@ -66,8 +67,9 @@ export default function App() {
 
     return (
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='Home' component={Home}/>
+          <Stack.Screen name='Chat' component={Chat}/>
         </Stack.Navigator>
       </NavigationContainer>
     );
